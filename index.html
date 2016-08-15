@@ -1,0 +1,221 @@
+<html>
+<head>
+<title>
+Upcoming
+</title>
+<SCRIPT language="JavaScript">
+<!--
+var timerID = null
+var timerRunning = false
+var hex = new Array("0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F")
+var bid = new Array("b0","b1","b2","b3","b4","b5","b6","b7","b8","b9","ba","bb","bc","bd","be","bf")
+var k = "#666666"
+var w = "#ffffff"
+
+function stopclock()
+{
+	if(timerRunning)
+		clearTimeout(timerID)
+	timerRunning = false
+}
+
+function startclock()
+{
+	stopclock()
+	showtime()
+}
+
+function calctime(count_secs_keep)
+{
+
+	var count_time = "<p>";
+	if (count_secs_keep < 0){
+		count_secs_keep=0;
+	}
+
+	var count_secs=count_secs_keep;
+	var count_hold = Math.floor(count_secs/604800)
+	if (count_hold > 0){
+		count_time += count_hold + " Week";
+		if (count_hold != 1){
+			count_time+="s"
+		}
+		count_secs -= 604800*count_hold;
+		if (count_secs>0){
+			count_time+=", ";
+
+		}
+	}
+	count_hold = Math.floor(count_secs/86400)
+	if (count_hold > 0){
+		count_time += count_hold + " Day";
+		if (count_hold != 1){
+			count_time+="s"
+		}
+		count_secs -= 86400*count_hold;
+		if (count_secs>0){
+			count_time+=", ";
+		}
+
+	}
+	count_hold = Math.floor(count_secs/3600)
+	if (count_hold > 0){
+		count_time += count_hold + " Hour";
+		if (count_hold != 1){
+			count_time+="s"
+		}
+		count_secs -= 3600*count_hold;
+		if (count_secs>0){
+			count_time+=", ";
+		}
+
+	}
+
+	count_hold = Math.floor(count_secs/60)
+	if (count_hold > 0){
+		count_time += count_hold + " Minute";
+		if (count_hold != 1){
+			count_time+="s"
+		}
+		count_secs -= 60*count_hold;
+		if (count_secs>0){
+			count_time+=", ";
+		}
+	}
+	count_hold=count_secs;
+	if (count_hold > 0){
+		count_time += count_hold + " Second";
+		if (count_hold != 1){
+			count_time+="s"
+		}
+	}
+	count_time += "</p><p>";
+
+        count_secs=count_secs_keep;
+        count_hold = Math.floor(count_secs/86400)
+	if (count_hold > 6){
+        if (count_hold > 0){
+                count_time += count_hold + " Day";
+                if (count_hold != 1){
+                        count_time+="s"
+                }
+                count_secs -= 86400*count_hold;
+                if (count_secs>0){
+                        count_time+=", ";
+                }
+
+        }
+        count_hold = Math.floor(count_secs/3600)
+        if (count_hold > 0){
+                count_time += count_hold + " Hour";
+                if (count_hold != 1){
+                        count_time+="s"
+                }
+                count_secs -= 3600*count_hold;
+                if (count_secs>0){
+                        count_time+=", ";
+                }
+
+        }
+
+        count_hold = Math.floor(count_secs/60)
+        if (count_hold > 0){
+                count_time += count_hold + " Minute";
+                if (count_hold != 1){
+                        count_time+="s"
+                }
+                count_secs -= 60*count_hold;
+                if (count_secs>0){
+                        count_time+=", ";
+                }
+        }
+        count_hold=count_secs;
+        if (count_hold > 0){
+                count_time += count_hold + " Second";
+                if (count_hold != 1){
+                        count_time+="s"
+                }
+        }
+	count_time += "</p>";
+	}
+        count_time += "<p>";
+
+
+
+	count_secs=count_secs_keep;
+        count_hold = Math.floor(count_secs/6048)/100
+        count_time += "<table><tr><td>"+count_hold+"</td><td>Weeks</td></tr>";
+        count_hold = Math.floor(count_secs/864)/100
+        count_time += "<tr><td>"+count_hold+"</td><td>Days</td></tr>";
+        count_hold = Math.floor(count_secs/36)/100
+        count_time += "<tr><td>"+count_hold+"</td><td>Hours</td></tr>";
+        count_hold = Math.floor(count_secs/.6)/100
+        count_time += "<tr><td>"+count_hold+"</td><td>Minutes</td></tr>";
+        count_hold = count_secs
+        count_time += "<tr><td>"+count_hold+"</td><td>Seconds</td></tr></table>";
+        count_time += "</p>";
+
+	
+	return count_time
+
+}
+
+function getsecs(timestring){
+	var b=timestring.split('-');
+	var time=b[3].split(':');
+	var secs=time[0]*3600+time[1]*60;
+	var year=b[0]-1;
+	var month=parseInt(b[1]);
+	var day=b[2];
+	secs += 31536000*year+Math.floor(year/4)*86400+Math.floor(year/400)*86400-86400*Math.floor(year/100)
+        var montharray=new Array(0,31,59,90,120,151,181,212,243,273,304,334);
+        secs += montharray[month-1]*86400
+        secs += (day-1)*86400
+
+	return secs;	
+}
+
+
+function showtime(){
+	var events=["Halloween","2016-10-31-18:00","Christmas","2016-12-25-00:00"];
+
+	var now = new Date()
+	var day = now.getDate()
+	var month = now.getMonth()
+	var year = now.getFullYear() -1
+	var hours = now.getHours()
+	var minutes = now.getMinutes()
+	var seconds = now.getSeconds()
+	var totsecs = hours*3600
+	totsecs += minutes*60
+	totsecs += seconds
+	totsecs += (now.getTime() % 1000) / 1000
+	totsecs += 31536000*year+Math.floor(year/4)*86400+Math.floor(year/400)*86400-86400*Math.floor(year/100)
+	var montharray=new Array(0,31,59,90,120,151,181,212,243,273,304,334)
+	totsecs += montharray[month]*86400
+	totsecs += (day-1)*86400
+
+	var eventLen=events.length;
+	var count_time="",i;
+
+	for(i=0;i<eventLen;i+=2){
+		var tsecs=getsecs(events[i+1]);
+		count_time += events[i]+": "+events[i+1]+"<br/>"+calctime(Math.floor(tsecs - totsecs))+"<hr/>";
+	}
+
+
+
+
+        document.getElementById("count_down").innerHTML = count_time
+        timerID = setTimeout("showtime()", 86)
+        timerRunning = true
+
+}
+
+</SCRIPT>
+</head>
+<body  onload="startclock()" background="images/paper.jpg" text=000000 link=000000 vlink=000000>
+<center>
+<font size=5><div id='count_down'>No JS</div>
+</font>
+
