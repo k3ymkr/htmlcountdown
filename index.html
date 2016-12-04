@@ -12,6 +12,68 @@ var bid = new Array("b0","b1","b2","b3","b4","b5","b6","b7","b8","b9","ba","bb",
 var k = "#666666"
 var w = "#ffffff"
 
+function showtime(d){
+	var events=["Halloween","2017-10-31-18:00","Christmas","2017-12-25-00:00"];
+
+	var now = new Date()
+	var day = now.getDate()
+	var month = now.getMonth()
+	var year = now.getFullYear() -1
+	var hours = now.getHours()
+	var minutes = now.getMinutes()
+	var seconds = now.getSeconds()
+	var totsecs=3600*hours
+	totsecs += minutes*60
+	totsecs += seconds
+	totsecs += (now.getTime() % 1000) / 1000
+	totsecs += 31536000*year+Math.floor(year/4)*86400+Math.floor(year/400)*86400-86400*Math.floor(year/100)
+	var montharray=new Array(0,31,59,90,120,151,181,212,243,273,304,334)
+	totsecs += montharray[month]*86400
+	totsecs += (day-1)*86400
+
+	var eventLen=events.length;
+	var count_time="",i;
+
+	for(i=0;i<eventLen;i+=2){
+		var tsecs=getsecs(events[i+1]);
+		var dayname="day"+i;
+		var dayoutname="dayout"+i;
+		var formname="form"+i;
+		try{
+			var dayaway=document.getElementById(dayname).innerHTML;
+		}
+		catch(exception){
+			var dayaway="Nada";
+		}
+		if (tsecs>totsecs){
+			count_time += events[i]+": "+events[i+1]
+
+			if (d==0){
+				count_time += "<br/><table><tr><td><input type=text size=4 id="+dayname+" onchange=\"printdate('"+events[i+1]+"',"+i+")\"></input> days away is </td><td><div id="+dayoutname+"></div></td></tr></table>";
+			}
+
+			if (d==0){
+				count_time +="<br/><div id="+formname+">"+calctime(Math.floor(tsecs - totsecs));
+				count_time += "</div><hr/>";
+			}
+			else{
+				document.getElementById(formname).innerHTML = calctime(Math.floor(tsecs - totsecs));
+			}
+		}
+		else if (tsecs+86400>totsecs){
+			document.getElementById(formname).innerHTML = "<blink><font color=red>The Time has come!!!</font></blink>";
+		}
+	}
+
+
+	if (d==0){
+		document.getElementById("count_down").innerHTML = count_time
+	}
+        timerID = setTimeout("showtime(1)", 86)
+        timerRunning = true
+
+}
+
 function stopclock()
 {
 	if(timerRunning)
@@ -195,67 +257,6 @@ function printdate(d,i){
 }
 
 
-function showtime(d){
-	var events=["Halloween","2017-10-31-18:00","Christmas","2017-12-25-00:00"];
-
-	var now = new Date()
-	var day = now.getDate()
-	var month = now.getMonth()
-	var year = now.getFullYear() -1
-	var hours = now.getHours()
-	var minutes = now.getMinutes()
-	var seconds = now.getSeconds()
-	var totsecs=3600*hours
-	totsecs += minutes*60
-	totsecs += seconds
-	totsecs += (now.getTime() % 1000) / 1000
-	totsecs += 31536000*year+Math.floor(year/4)*86400+Math.floor(year/400)*86400-86400*Math.floor(year/100)
-	var montharray=new Array(0,31,59,90,120,151,181,212,243,273,304,334)
-	totsecs += montharray[month]*86400
-	totsecs += (day-1)*86400
-
-	var eventLen=events.length;
-	var count_time="",i;
-
-	for(i=0;i<eventLen;i+=2){
-		var tsecs=getsecs(events[i+1]);
-		var dayname="day"+i;
-		var dayoutname="dayout"+i;
-		var formname="form"+i;
-		try{
-			var dayaway=document.getElementById(dayname).innerHTML;
-		}
-		catch(exception){
-			var dayaway="Nada";
-		}
-		if (tsecs>totsecs){
-			count_time += events[i]+": "+events[i+1]
-
-			if (d==0){
-				count_time += "<br/><table><tr><td><input type=text size=4 id="+dayname+" onchange=\"printdate('"+events[i+1]+"',"+i+")\"></input> days away is </td><td><div id="+dayoutname+"></div></td></tr></table>";
-			}
-
-			if (d==0){
-				count_time +="<br/><div id="+formname+">"+calctime(Math.floor(tsecs - totsecs));
-				count_time += "</div><hr/>";
-			}
-			else{
-				document.getElementById(formname).innerHTML = calctime(Math.floor(tsecs - totsecs));
-			}
-		}
-		else if (tsecs+86400>totsecs){
-			document.getElementById(formname).innerHTML = "<blink><font color=red>The Time has come!!!</font></blink>";
-		}
-	}
-
-
-	if (d==0){
-		document.getElementById("count_down").innerHTML = count_time
-	}
-        timerID = setTimeout("showtime(1)", 86)
-        timerRunning = true
-
-}
 
 </SCRIPT>
 </head>
