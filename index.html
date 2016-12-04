@@ -21,8 +21,8 @@ function stopclock()
 
 function startclock()
 {
-	stopclock()
-	showtime()
+	stopclock();
+	showtime(0);
 }
 
 function calctime(count_secs_keep)
@@ -175,9 +175,28 @@ function getsecs(timestring){
 	return secs;	
 }
 
+function IsNumeric(input){
+    var RE = /^\d+$/;
+    return (RE.test(input));
+}
 
-function showtime(){
-	var events=["Halloween","2016-10-31-18:00","Christmas","2016-12-25-00:00"];
+
+function printdate(d,i){
+	var dayname="day"+i
+	var dayoutname="dayout"+i
+        var t= document.getElementById(dayname).value;
+	if (IsNumeric(t)){
+		var b=d.split('-');
+		var time=b[3].split(':');
+		var d= new Date(b[0],b[1]-1,b[2],time[0],time[1],0,'0');
+		d.setDate(d.getDate()-t);
+		document.getElementById(dayoutname).innerHTML = d.toDateString();
+	}
+}
+
+
+function showtime(d){
+	var events=["Halloween","2017-10-31-18:00","Christmas","2017-12-25-00:00"];
 
 	var now = new Date()
 	var day = now.getDate()
@@ -186,7 +205,7 @@ function showtime(){
 	var hours = now.getHours()
 	var minutes = now.getMinutes()
 	var seconds = now.getSeconds()
-	var totsecs = hours*3600
+	var totsecs=3600*hours
 	totsecs += minutes*60
 	totsecs += seconds
 	totsecs += (now.getTime() % 1000) / 1000
@@ -200,14 +219,40 @@ function showtime(){
 
 	for(i=0;i<eventLen;i+=2){
 		var tsecs=getsecs(events[i+1]);
-		count_time += events[i]+": "+events[i+1]+"<br/>"+calctime(Math.floor(tsecs - totsecs))+"<hr/>";
+		var dayname="day"+i;
+		var dayoutname="dayout"+i;
+		var formname="form"+i;
+		try{
+			var dayaway=document.getElementById(dayname).innerHTML;
+		}
+		catch(exception){
+			var dayaway="Nada";
+		}
+		if (tsecs>totsecs){
+			count_time += events[i]+": "+events[i+1]
+
+			if (d==0){
+				count_time += "<br/><table><tr><td><input type=text size=4 id="+dayname+" onchange=\"printdate('"+events[i+1]+"',"+i+")\"></input> days away is </td><td><div id="+dayoutname+"></div></td></tr></table>";
+			}
+
+			if (d==0){
+				count_time +="<br/><div id="+formname+">"+calctime(Math.floor(tsecs - totsecs));
+				count_time += "</div><hr/>";
+			}
+			else{
+				document.getElementById(formname).innerHTML = calctime(Math.floor(tsecs - totsecs));
+			}
+		}
+		else if (tsecs+86400>totsecs){
+			document.getElementById(formname).innerHTML = "<blink><font color=red>The Time has come!!!</font></blink>";
+		}
 	}
 
 
-
-
-        document.getElementById("count_down").innerHTML = count_time
-        timerID = setTimeout("showtime()", 86)
+	if (d==0){
+		document.getElementById("count_down").innerHTML = count_time
+	}
+        timerID = setTimeout("showtime(1)", 86)
         timerRunning = true
 
 }
@@ -218,4 +263,3 @@ function showtime(){
 <center>
 <font size=5><div id='count_down'>No JS</div>
 </font>
-
