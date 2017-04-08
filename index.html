@@ -35,6 +35,7 @@ function showtime(d){
 	var count_time="",i;
 
 	for(i=0;i<eventLen;i+=2){
+		//alert(events[i]);
 		var tsecs=getsecs(events[i+1]);
 		var dayname="day"+i;
 		var dayoutname="dayout"+i;
@@ -46,13 +47,9 @@ function showtime(d){
 			var dayaway="Nada";
 		}
 		if (tsecs>totsecs){
-			count_time += events[i]+": "+events[i+1]
-
 			if (d==0){
+				count_time += events[i]+": "+events[i+1]
 				count_time += "<br/><table><tr><td><input type=text size=4 id="+dayname+" onchange=\"printdate('"+events[i+1]+"',"+i+")\"></input> days away is </td><td><div id="+dayoutname+"></div></td></tr></table>";
-			}
-
-			if (d==0){
 				count_time +="<br/><div id="+formname+">"+calctime(Math.floor(tsecs - totsecs));
 				count_time += "</div><hr/>";
 			}
@@ -61,7 +58,15 @@ function showtime(d){
 			}
 		}
 		else if (tsecs+86400>totsecs){
-			document.getElementById(formname).innerHTML = "<blink><font color=red>The Time has come!!!</font></blink>";
+			if (d==0){
+				count_time += events[i]+": "+events[i+1]
+				count_time += "<br/><table><tr><td><input type=text size=4 id="+dayname+" onchange=\"printdate('"+events[i+1]+"',"+i+")\"></input> days away is </td><td><div id="+dayoutname+"></div></td></tr></table>";
+				count_time +="<br/><div id="+formname+">"+calctime(Math.floor(tsecs - totsecs));
+				count_time += "</div><hr/>";
+			}
+			else{
+				document.getElementById(formname).innerHTML = "<blink><font color=red>The Time has come!!!</font></blink>";
+			}
 		}
 	}
 
@@ -224,8 +229,13 @@ function calctime(count_secs_keep)
 
 function getsecs(timestring){
 	var b=timestring.split('-');
-	var time=b[3].split(':');
-	var secs=time[0]*3600+time[1]*60;
+	if (b.length>3){
+		var time=b[3].split(':');
+		var secs=time[0]*3600+time[1]*60;
+	}
+	else{
+		var secs=0;
+	}
 	var year=b[0]-1;
 	var month=parseInt(b[1]);
 	var day=b[2];
@@ -249,8 +259,13 @@ function printdate(d,i){
         var t= document.getElementById(dayname).value;
 	if (IsNumeric(t)){
 		var b=d.split('-');
-		var time=b[3].split(':');
-		var d= new Date(b[0],b[1]-1,b[2],time[0],time[1],0,'0');
+		if (b.length>3){
+			var time=b[3].split(':');
+			var d= new Date(b[0],b[1]-1,b[2],time[0],time[1],0,'0');
+		}
+		else{
+			var d= new Date(b[0],b[1]-1,b[2],0,0,0,'0');
+		}
 		d.setDate(d.getDate()-t);
 		document.getElementById(dayoutname).innerHTML = d.toDateString();
 	}
@@ -260,7 +275,7 @@ function printdate(d,i){
 
 </SCRIPT>
 </head>
-<body  onload="startclock()" background="images/paper.jpg" text=000000 link=000000 vlink=000000>
+<body  onload="startclock()" text=000000 link=000000 vlink=000000>
 <center>
 <font size=5><div id='count_down'>No JS</div>
 </font>
